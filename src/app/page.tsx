@@ -1,12 +1,9 @@
-
 "use client";
 
 import React, { useState } from 'react';
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
 
 interface QuestionAnswer {
   question: string;
@@ -16,34 +13,37 @@ interface QuestionAnswer {
 export default function Home() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState('');
-  const [studyGuide, setStudyGuide] = useState<QuestionAnswer[]>([]);
+  const [flashcards, setFlashcards] = useState<QuestionAnswer[]>([]);
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
 
-  const addQuestion = () => {
+  const addFlashcard = () => {
     if (question && answer) {
-      setStudyGuide([...studyGuide, { question, answer }]);
+      setFlashcards([...flashcards, { question, answer }]);
       setQuestion('');
       setAnswer('');
     }
   };
 
-  const exportStudyGuide = () => {
-    const text = studyGuide.map((qa) => `Q: ${qa.question}\nA: ${qa.answer}\n`).join('\n');
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'study_guide.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const nextCard = () => {
+    setCurrentCardIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
+    setShowAnswer(false);
+  };
+
+  const prevCard = () => {
+    setCurrentCardIndex((prevIndex) => (prevIndex - 1 + flashcards.length) % flashcards.length);
+    setShowAnswer(false);
+  };
+
+  const toggleAnswer = () => {
+    setShowAnswer(!showAnswer);
   };
 
   return (
-    <div className="container mx-auto p-4 flex flex-col gap-4">
-      <Card>
+    <div className="container mx-auto p-4 flex flex-col items-center gap-4">
+      <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Add Question/Answer</CardTitle>
+          <CardTitle>Add Flashcard</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid gap-2">
@@ -64,30 +64,33 @@ export default function Home() {
               onChange={(e) => setAnswer(e.target.value)}
             />
           </div>
-          <Button onClick={addQuestion}>Add to Study Guide</Button>
+          <Button onClick={addFlashcard}>Add Flashcard</Button>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Study Guide</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[400px] w-full rounded-md border">
-            <div className="p-4">
-              {studyGuide.map((qa, index) => (
-                <div key={index} className="mb-4">
-                  <p className="font-semibold">Q: {qa.question}</p>
-                  <p>A: {qa.answer}</p>
-                </div>
-              ))}
+      {flashcards.length > 0 && (
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Flashcard</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="text-center">
+              <p className="font-semibold">
+                Q: {flashcards[currentCardIndex].question}
+              </p>
+              {showAnswer && (
+                <p>
+                  A: {flashcards[currentCardIndex].answer}
+                </p>
+              )}
             </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
-
-      {studyGuide.length > 0 && (
-        <Button variant="secondary" onClick={exportStudyGuide}>Export Study Guide</Button>
+            <div className="flex justify-between">
+              <Button variant="secondary" onClick={prevCard}>Previous</Button>
+              <Button onClick={toggleAnswer}>{showAnswer ? 'Hide Answer' : 'Show Answer'}</Button>
+              <Button variant="secondary" onClick={nextCard}>Next</Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
