@@ -292,6 +292,31 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4 flex flex-col items-center gap-4">
+      {flashcards.length > 0 && (
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Flashcard</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="text-center">
+              <p className="font-semibold">
+                Q: {flashcards[currentCardIndex].question}
+              </p>
+              {showAnswer && (
+                <p>
+                  A: {flashcards[currentCardIndex].answer}
+                </p>
+              )}
+            </div>
+            <div className="flex justify-between">
+              <Button variant="secondary" onClick={prevCard}>Previous</Button>
+              <Button onClick={toggleAnswer}>{showAnswer ? 'Hide Answer' : 'Show Answer'}</Button>
+              <Button variant="secondary" onClick={nextCard}>Next</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Add Flashcard</CardTitle>
@@ -318,31 +343,7 @@ export default function Home() {
           <Button onClick={addFlashcard}>Add Flashcard</Button>
         </CardContent>
       </Card>
-
-      {flashcards.length > 0 && (
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Flashcard</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            <div className="text-center">
-              <p className="font-semibold">
-                Q: {flashcards[currentCardIndex].question}
-              </p>
-              {showAnswer && (
-                <p>
-                  A: {flashcards[currentCardIndex].answer}
-                </p>
-              )}
-            </div>
-            <div className="flex justify-between">
-              <Button variant="secondary" onClick={prevCard}>Previous</Button>
-              <Button onClick={toggleAnswer}>{showAnswer ? 'Hide Answer' : 'Show Answer'}</Button>
-              <Button variant="secondary" onClick={nextCard}>Next</Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 }
+
