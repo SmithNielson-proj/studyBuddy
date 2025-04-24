@@ -267,6 +267,7 @@ export default function Home() {
   const [flashcards, setFlashcards] = useState<QuestionAnswer[]>(initialFlashcards);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const [showAddCard, setShowAddCard] = useState(false);
 
   const addFlashcard = () => {
     if (question && answer) {
@@ -288,6 +289,10 @@ export default function Home() {
 
   const toggleAnswer = () => {
     setShowAnswer(!showAnswer);
+  };
+
+  const toggleAddCard = () => {
+    setShowAddCard(!showAddCard);
   };
 
   return (
@@ -317,33 +322,38 @@ export default function Home() {
         </Card>
       )}
 
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Add Flashcard</CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4">
-          <div className="grid gap-2">
-            <label htmlFor="question">Question:</label>
-            <Textarea
-              id="question"
-              placeholder="Enter your question"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-            />
-          </div>
-          <div className="grid gap-2">
-            <label htmlFor="answer">Answer:</label>
-            <Textarea
-              id="answer"
-              placeholder="Enter the answer"
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-            />
-          </div>
-          <Button onClick={addFlashcard}>Add Flashcard</Button>
-        </CardContent>
-      </Card>
+      <Button onClick={toggleAddCard}>
+        {showAddCard ? 'Hide Flashcard Form' : 'Add Flashcard'}
+      </Button>
+
+      {showAddCard && (
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Add Flashcard</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <div className="grid gap-2">
+              <label htmlFor="question">Question:</label>
+              <Textarea
+                id="question"
+                placeholder="Enter your question"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="answer">Answer:</label>
+              <Textarea
+                id="answer"
+                placeholder="Enter the answer"
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+              />
+            </div>
+            <Button onClick={addFlashcard}>Add Flashcard</Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
-
